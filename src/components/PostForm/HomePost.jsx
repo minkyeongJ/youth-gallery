@@ -45,7 +45,7 @@ const HomePost = ({ postsInfos }) => {
         alert('신고하였습니다.');
         setShowModal(false);
     };
-    console.log(postsInfos?.author.accountname);
+
     return (
         <>
             <HomePostDiv>
