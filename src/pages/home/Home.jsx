@@ -12,12 +12,15 @@ import * as S from './Styled';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 
 function Home() {
-    const { setObservationTarget } = useIntersectionObserver();
-
     const [loading, setLoading] = useState(false);
     const [postsInfo, setPostInfo] = useState([]);
-    const limitItem = 10;
-    const [skipItem, setSkipItem] = useState(0);
+    const [limitItem, setLimitItem] = useState(5);
+    const skipItem = 0;
+
+    const { setObservationTarget } = useIntersectionObserver({
+        limitItem,
+        setLimitItem,
+    });
 
     const targetStyle = { height: '100px' };
 
@@ -25,15 +28,11 @@ function Home() {
         setLoading(true);
         axiosHomeList(limitItem, skipItem).then((data) => setPostInfo(data)); //promise에서 response 추출
         setLoading(false);
-    }, []);
+    }, [limitItem, skipItem]);
 
     useEffect(() => {
         homeList();
-        setSkipItem(limitItem);
-    }, []);
-
-    console.log(limitItem, skipItem);
-
+    }, [limitItem]);
     return (
         <>
             <Nav>

@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 
-const useIntersectionObserver = (callback) => {
+const useIntersectionObserver = ({ limitItem, setLimitItem }) => {
     const [observationTarget, setObservationTarget] = useState(null);
-
     const observer = useRef(
         new IntersectionObserver(
             ([entry]) => {
-                console.log('entry', entry);
+                //교차 상태가 아니라면
                 if (!entry.isIntersecting) return;
-                callback();
+                //교차 상태라면
+                setLimitItem(limitItem + 5);
             },
-            { threshold: 1 }
+            { threshold: 0 }
         )
     );
 
