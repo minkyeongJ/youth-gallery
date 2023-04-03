@@ -31,13 +31,10 @@ function PostHeartBtn({ datas_id, hearted, heartCount }) {
                     'Authorization': `Bearer ${getToken}`,
                     'Content-type': 'application/json',
                 },
-            })
-                .then((response) => {
-                    setState(response.data.post.hearted);
-                    setCount(response.data.post.heartCount);
-                })
-                .then(console.log(state))
-                .then(console.log(count));
+            }).then((response) => {
+                setState(response.data.post.hearted);
+                setCount(response.data.post.heartCount);
+            });
         } catch (error) {
             console.log(error);
         }
@@ -47,7 +44,6 @@ function PostHeartBtn({ datas_id, hearted, heartCount }) {
             ? useAxios(url + `/post/${datas_id}/unheart`, 'DELETE')
             : useAxios(url + `/post/${datas_id}/heart`, 'POST');
     };
-    console.log(state);
     return (
         <>
             {state ? (

@@ -9,62 +9,30 @@ import TabMenu from '../../components/tab/TabMenu';
 import axiosHomeList from '../../utils/axiosHomeList';
 import NonFollowing from '../NonFollowing';
 import * as S from './Styled';
+import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 
 function Home() {
-    const [scrollY, setScrollY] = useState(window.pageYOffset);
+    const [loading, setLoading] = useState(false);
+    const [postsInfo, setPostInfo] = useState([]);
+    const [limitItem, setLimitItem] = useState(5);
+    const skipItem = 0;
 
-    const handleFollow = useCallback(() => {
-        setScrollY(window.pageYOffset); // window 스크롤 값을 ScrollY에 저장
-    }, []);
-
-    useEffect(() => {
-        console.log('ScrollY is ', scrollY); // ScrollY가 변화할때마다 값을 콘솔에 출력
-    }, [scrollY]);
-
-    useEffect(() => {
-        const watch = () => {
-            window.addEventListener('scroll', handleFollow);
-        };
-        watch(); // addEventListener 함수를 실행
-        return () => {
-            window.removeEventListener('scroll', handleFollow); // addEventListener 함수를 삭제
-        };
+    const { setObservationTarget } = useIntersectionObserver({
+        limitItem,
+        setLimitItem,
     });
 
-    // const [loading, setLoading] = useState(false);
-    const [postsInfo, setPostInfo] = useState([]);
-    const loading = false;
+    const targetStyle = { height: '100px' };
 
     const homeList = useCallback(() => {
-        axiosHomeList(10, 15).then((data) => setPostInfo(data)); //promise에서 response 추출
-    }, []);
+        setLoading(true);
+        axiosHomeList(limitItem, skipItem).then((data) => setPostInfo(data)); //promise에서 response 추출
+        setLoading(false);
+    }, [limitItem, skipItem]);
 
     useEffect(() => {
         homeList();
-    }, []);
-    // const url = 'https://mandarin.api.weniv.co.kr';
-    // const getToken = localStorage.getItem('token');
-
-    // useEffect(() => {
-    //     setLoading(true); // api 호출 전에 true로 변경하여 로딩화면 띄우기
-    //     axios({
-    //         method: 'GET',
-    //         url: url + `/post/feed/?limit=100&skip=0`,
-    //         headers: {
-    //             'Authorization': `Bearer ${getToken}`,
-    //             'Content-type': 'application/json',
-    //         },
-    //     })
-    //         .then(
-    //             (response) => {
-    //                 setPosts(response);
-    //                 setLoading(false);
-    //             }
-    //             // api 호출 완료 됐을 때 false로 변경하려 로딩화면 숨김처리
-    //         )
-    //         .catch((error) => console.log(error.message));
-    // }, []);
-
+    }, [limitItem]);
     return (
         <>
             <Nav>
@@ -72,9 +40,7 @@ function Home() {
             </Nav>
             <S.Div>
                 <S.PaddingDiv>
-                    {loading ? (
-                        <Loading />
-                    ) : size(postsInfo) > 0 ? (
+                    {size(postsInfo) > 0 ? (
                         <S.View>
                             <S.ScrollBlind>
                                 {postsInfo.map((post, i) => (
@@ -83,6 +49,13 @@ function Home() {
                                         postsInfos={post}
                                     />
                                 ))}
+                                {loading && <Loading />}
+                                {!loading && (
+                                    <div
+                                        ref={setObservationTarget}
+                                        style={targetStyle}
+                                    ></div>
+                                )}
                             </S.ScrollBlind>
                         </S.View>
                     ) : (

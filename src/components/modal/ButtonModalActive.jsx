@@ -18,12 +18,8 @@ function ButtonModalActive({
     useEffect(() => {
         setShowModal(propState);
     }, [propState]);
-    console.log(propState);
-    console.log(showModal);
-    console.log(postModalValues.values);
 
     const closeModal = () => {
-        console.log(false);
         setShowModal(false);
         setShowInnerModal(false);
         propsCloseFunc(false);
